@@ -1,0 +1,3 @@
+"""
+   EiscatDIRAC.DataManagementSystem package
+"""
