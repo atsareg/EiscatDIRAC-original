@@ -1410,18 +1410,17 @@ Ext.define('DIRAC.FileCatalog.classes.FileCatalog', {
 
                 if (response.status == 200) {
 
-                  var oResponse = {};
-                  oResponse = Ext.JSON.decode(response.responseText);
+                  var response = {};
+                  response = Ext.JSON.decode(response.responseText);
 
-                  //var oSetupData = {};
-                  //oSetupData.response = {};
-                  //oSetupData.response = Ext.JSON.decode(response.responseText);
-                  //  setupData : oSetupData
+                  var oSetupData = {};
+                  oSetupData.data = {};
+                  oSetupData.data.InputData = response['result']['InputData'][1]
 
                   GLOBAL.APP.MAIN_VIEW.createNewModuleContainer({
                     objectType : "app",
                     moduleName : "DIRAC.JobLaunchpad.classes.JobLaunchpad",
-                    oResponse : oResponse
+                    setupData : oSetupData
                   });
                 } else {
                   GLOBAL.APP.CF.showAjaxErrorMessage(response);
