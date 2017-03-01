@@ -3,15 +3,26 @@ Ext.define('DIRAC.JobLaunchpad.classes.JobLaunchpad', {
 
       requires : ['Ext.panel.Panel', 'Ext.form.FieldSet', "Ext.menu.CheckItem", 'Ext.button.Button', 'Ext.toolbar.Toolbar', 'Ext.form.Panel', 'Ext.tree.Panel', 'Ext.data.TreeStore', 'Ext.menu.Menu'],
 
+      loadState : function( data ) {
+
+        var me = this;
+
+        for ( var key in data ) {
+          if ( key in me.textualFields ) {
+            me.__destroyJdlField( key );
+          }
+          me.textualFields[key] = {};
+          me.textualFields[key].value = data[key];
+          me.__createJdlField( key, data[key], true );
+        }
+
+      },
+
       initComponent : function() {
 
         var me = this;
 
-        if ( typeof me.launcher.oResponse != "undefined"){
-          me.launcher.title = "Eiscat Job Launchpad";
-        } else {
-          me.launcher.title = "Job Launchpad";
-        }
+        me.launcher.title = "Job Launchpad";
 
         me.launcher.maximized = false;
 
@@ -640,7 +651,9 @@ Ext.define('DIRAC.JobLaunchpad.classes.JobLaunchpad', {
 
           me.predefinedSetsTreeStore = Ext.create('Ext.data.TreeStore', {
                 proxy : {
-                  type : 'localstorage'
+                  type : 'localstorage',
+                  // A unique ID is now required
+                  id : 'Available Sets'
                 },
                 root : {
                   text : 'Available Sets'
