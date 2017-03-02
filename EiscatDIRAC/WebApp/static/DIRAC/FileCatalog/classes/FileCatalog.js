@@ -1400,16 +1400,11 @@ Ext.define('DIRAC.FileCatalog.classes.FileCatalog', {
             var response = Ext.JSON.decode(response.responseText);
 
             if (response["success"] == "true") {
-
               archivePath = response["archivePath"];
-
               var sUrl = GLOBAL.BASE_URL + 'FileCatalog/getSelectedFiles?archivePath=' + encodeURIComponent( archivePath );
-              window.open(sUrl, 'Data zip archive', 'width=400,height=200');
-
+              window.open( sUrl, 'Data zip archive', 'width=400,height=200' );
             } else {
-
               GLOBAL.APP.CF.alert( response['lfn'] + ":\n  " + response["error"], "error" );
-
             }
 
           },
