@@ -27,9 +27,12 @@ class FileCatalogHandler( WebHandler ):
   '''
   @asyncGen
   def web_getSelectedFiles(self):
-      self.set_header('Content-type','text/plain')
-      arguments=self.request.arguments
-      gLogger.always( "submit: incoming arguments %s to getSelectedFiles" % arguments )
+
+    arguments=self.request.arguments
+    gLogger.always( "getSelectedFiles: incoming arguments %s" % arguments )
+
+    # First pass: download files and check for the success
+    if "archivePath" not in arguments:
       tmpdir='/tmp/eiscat/'+str(time.time())+str(random.random())
       dataMgr = DataManager( vo = self.vo )
       lfnStr = str(arguments['path'][0])
@@ -37,23 +40,30 @@ class FileCatalogHandler( WebHandler ):
       os.chdir(tmpdir)
       for lfn in lfnStr.split(','):
         gLogger.always( "Data manager get file %s" % lfn )
-        last_slash=lfn.rfind("/")
-        pos_relative=lfn.find("/")
-        pos_relative=lfn.find("/",pos_relative+1)
-        pos_relative=lfn.find("/",pos_relative+1)
-        pos_relative=pos_relative
-        pathInZip=lfn[pos_relative:last_slash]
-        tmpPathInZip=tmpdir+pathInZip
+        last_slash = lfn.rfind( "/" )
+        pos_relative = lfn.find( "/" )
+        pos_relative = lfn.find( "/", pos_relative + 1 )
+        pos_relative = lfn.find( "/", pos_relative + 1 )
+        pos_relative = pos_relative
+        pathInZip = lfn[pos_relative:last_slash]
+        tmpPathInZip = tmpdir + pathInZip
         gLogger.always( "path in zip %s" % tmpPathInZip )
-        if not os.path.isdir(tmpPathInZip): os.makedirs(tmpPathInZip)
-        result = dataMgr.getFile(str(lfn), destinationDir=str(tmpPathInZip) )
+        if not os.path.isdir( tmpPathInZip ):
+          os.makedirs( tmpPathInZip )
+        result = dataMgr.getFile( str(lfn), destinationDir = str( tmpPathInZip ) )
         if not result[ "OK" ] :
-           gLogger.error( "getSelectedFiles: %s" % result[ "Message" ] )
+          gLogger.error( "Error getting while getting files", result[ "Message" ] )
+          self.finish( { "success": "false",
+                         'error': result[ "Message" ],
+                         'lfn': lfn } )
+          shutil.rmtree(tmpdir)
+          return
 
       #make zip file
-      zipname = tmpdir.split('/')[-1]+'.zip'
-      zf = zipfile.ZipFile('/tmp/eiscat/'+zipname, "w")
-      gLogger.always( "zip file /tmp/eiscat/%s" % zipname )
+      zipname = tmpdir.split('/')[-1] + '.zip'
+      archivePath = '/tmp/eiscat/' + zipname
+      zFile = zipfile.ZipFile( archivePath, "w" )
+      gLogger.always( "zip file %s" % archivePath )
       gLogger.always( "start walk in tmpdir %s" % tmpdir )
       for absolutePath, dirs, files in os.walk(tmpdir):
         gLogger.always( "absolute path %s" % absolutePath )
@@ -67,18 +77,26 @@ class FileCatalogHandler( WebHandler ):
           pos_relative=pos_relative+1
           relativePath = absolutePath[pos_relative:]
           gLogger.always( "relativePath %s, file %s" % (relativePath, filename) )
-          zf.write(os.path.join(relativePath, filename))
-      zf.close()
-      #read zip file
-      f = open('/tmp/eiscat/'+zipname, "rb")
-      obj = f.read()
-      f.close()
-      #cleanup
+          zFile.write(os.path.join(relativePath, filename))
+      zFile.close()
       shutil.rmtree(tmpdir)
-      os.remove('/tmp/eiscat/'+zipname)
-      self.set_header('Content-Disposition', 'attachment; filename="'+zipname)
+      self.finish( { "success": "true",
+                     'archivePath': archivePath } )
 
-      self.write(obj)
+    else:
+      # Second pass: deliver the requested archive
+      archivePath = arguments['archivePath'][0]
+      #read zip file
+      with open( archivePath, "rb") as archive:
+        data = archive.read()
+      #cleanup
+      os.remove( archivePath )
+
+      self.set_header( 'Content-type', 'text/plain' )
+      self.set_header( 'Content-Length', len( data ) )
+      self.set_header( 'Content-Disposition', 'attachment; filename="' + os.path.basename( archivePath ) )
+
+      self.finish( data )
 
   '''
     Method to read all the available fields possible for defining a query
