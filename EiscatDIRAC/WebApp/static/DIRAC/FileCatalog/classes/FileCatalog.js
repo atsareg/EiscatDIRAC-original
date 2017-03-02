@@ -1388,8 +1388,35 @@ Ext.define('DIRAC.FileCatalog.classes.FileCatalog', {
                oSendData.push(selection[i].get('fullfilename'));
         }
 
-        location.href = GLOBAL.BASE_URL + 'FileCatalog/getSelectedFiles?path=' + encodeURIComponent(oSendData.join(","));
+        Ext.Ajax.request({
+          url : GLOBAL.BASE_URL + 'FileCatalog/getSelectedFiles',
+          params : {
+            path : oSendData.join(",")
+          },
+          scope : me,
+          success : function(response) {
 
+            var me = this;
+            var response = Ext.JSON.decode(response.responseText);
+
+            if (response["success"] == "true") {
+
+              archivePath = response["archivePath"];
+
+              var sUrl = GLOBAL.BASE_URL + 'FileCatalog/getSelectedFiles?archivePath=' + encodeURIComponent( archivePath );
+              window.open(sUrl, 'Data zip archive', 'width=400,height=200');
+
+            } else {
+
+              GLOBAL.APP.CF.alert( response['lfn'] + ":" + response["error"], "error" );
+
+            }
+
+          },
+          failure : function(response) {
+            GLOBAL.APP.CF.showAjaxErrorMessage(response);
+          }
+        });
       },
 
       __getSelectedFiles2Launchpad : function() {
