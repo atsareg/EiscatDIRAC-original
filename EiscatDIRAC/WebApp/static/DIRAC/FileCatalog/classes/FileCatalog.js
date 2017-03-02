@@ -1408,7 +1408,7 @@ Ext.define('DIRAC.FileCatalog.classes.FileCatalog', {
 
             } else {
 
-              GLOBAL.APP.CF.alert( response['lfn'] + ":" + response["error"], "error" );
+              GLOBAL.APP.CF.alert( response['lfn'] + ":\n  " + response["error"], "error" );
 
             }
 
