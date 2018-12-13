@@ -1,4 +1,4 @@
-Ext.define('DIRAC.FileCatalog.classes.FileCatalog', {
+Ext.define('EiscatDIRAC.FileCatalog.classes.FileCatalog', {
       extend : 'Ext.dirac.core.Module',
       requires : ['Ext.util.*', 'Ext.panel.Panel', "Ext.form.field.Text", "Ext.button.Button", "Ext.menu.Menu",
                   "Ext.form.field.ComboBox", "Ext.layout.*", "Ext.form.field.TextArea", "Ext.form.field.Checkbox",
