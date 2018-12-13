@@ -1,4 +1,4 @@
-Ext.define('DIRAC.JobLaunchpad.classes.JobLaunchpad', {
+Ext.define('EiscatDIRAC.JobLaunchpad.classes.JobLaunchpad', {
       extend : 'Ext.dirac.core.Module',
 
       requires : ['Ext.panel.Panel', 'Ext.form.FieldSet', "Ext.menu.CheckItem", 'Ext.button.Button', 'Ext.toolbar.Toolbar', 'Ext.form.Panel', 'Ext.tree.Panel', 'Ext.data.TreeStore', 'Ext.menu.Menu'],
