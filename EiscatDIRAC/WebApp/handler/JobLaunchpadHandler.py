@@ -202,13 +202,13 @@ class JobLaunchpadHandler(WebHandler):
 
   def web_getLaunchpadOpts(self):
 
-    defaultParams = {"JobName" :        [1, 'DIRAC'],
+    defaultParams = {"JobName" :        [1, 'EiscatDIRAC'],
                      "Executable" :     [1, "/bin/ls"],
                      "Arguments" :      [1, "-ltrA"],
                      "OutputSandbox" :  [1, "std.out, std.err"],
                      "InputData" :      [0, ""],
                      "OutputData" :     [0, ""],
-                     "OutputSE" :       [0, "DIRAC-USER"],
+                     "OutputSE" :       [0, "EiscatDIRAC-USER"],
                      "OutputPath":      [0, ""],
                      "CPUTime" :        [0, "86400"],
                      "Site" :           [0, ""],

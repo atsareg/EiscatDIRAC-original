@@ -56,7 +56,7 @@ class EiscatPolicy( SecurityManagerBase ):
 
 
   def __buildRolesAndGroups( self ):
-    """ Rebuild the cache dictionary for VOMS roles and DIRAC Groups"""
+    """ Rebuild the cache dictionary for VOMS roles and EiscatDIRAC Groups"""
 
     self.lastBuild = datetime.datetime.now()
 
@@ -71,7 +71,7 @@ class EiscatPolicy( SecurityManagerBase ):
 
 
   def __getVomsRole(self, grpName):
-    """ Returns the VOMS role of a given DIRAC group
+    """ Returns the VOMS role of a given EiscatDIRAC group
 
         :param grpName:
 
@@ -83,7 +83,7 @@ class EiscatPolicy( SecurityManagerBase ):
     return self.diracGroups.get( grpName )
 
   def __getDiracGroups( self, vomsRole ):
-    """ Returns all the DIRAC groups that have a given VOMS role
+    """ Returns all the EiscatDIRAC groups that have a given VOMS role
 
         :param vomsRole:
 
@@ -96,7 +96,7 @@ class EiscatPolicy( SecurityManagerBase ):
     return self.vomsRoles.get( vomsRole, [] )
 
   def __shareVomsRole( self, grpName, otherGrpName ):
-    """ Returns True if the two DIRAC groups have the same VOMS role"""
+    """ Returns True if the two EiscatDIRAC groups have the same VOMS role"""
 
     vomsGrp = self.__getVomsRole( grpName )
     vomsOtherGrp = self.__getVomsRole( otherGrpName )
